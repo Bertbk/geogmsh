@@ -1,12 +1,6 @@
 SetFactory("OpenCASCADE");
 
 DefineConstant[
- L={1, Min 0.1, Max 100, Step 0.1, Name "Geo/00Length (dilation factor)"},
- L_sail = {0.1, Min 0.01, Max 0.3, Step 0.01, Name "Geo/01Sail Heigh", ReadOnly 1, Visible 0},
- ABC = {0, Choices{0="No", 1 ="Yes"}, Name "FEM/0ABC"},
- ABC_X = {0.8, Min 0.6, Max 5, Step 0.1, Name "FEM/1ABC X-rad", ReadOnly !ABC, AutoCheck 1},
- ABC_Z = {0.3, Min 0.1, Max 1.5, Step 0.01, Name "FEM/1ABC Z-rad", ReadOnly !ABC, AutoCheck 1},
- SYMMETRIC = {0, Choices{0="No", 1 ="Yes"}, Name "FEM/2Symmetric only"},
  h = {0.02, Min 0.01, Max 10, Step 0.01, Name "Geo/1Element mesh size"} 
 ];
 
@@ -44,7 +38,7 @@ Spline(101) = {100, 104, 105, 101};
 
 Line Loop(100) = {100,-101};
 Surface(100) = {100};
-Extrude {0,0,L_sail}{Surface{100};}
+Extrude {0,0,0.1}{Surface{100};}
 
 // Stern Planes ("Wings in the back")
 Point(200) = {0.91, 0.085, 0,h};
@@ -88,30 +82,17 @@ Symmetry {0, 0, 1} { Duplicata{ Surface{108:110}; } }
 //Fragmentations
 BooleanFragments{Surface{1:6};Delete;}{Surface{100:114};Delete;}
 
-Delete{Surface{100, 116, 118, 119, 120, 122, 123, 124, 125, 127, 132, 135, 137, 138, 140:145, 147:156, 158, 159, 160, 161, 162, 163, 165:171};}
+Delete{Surface{100, 116, 118, 119, 120, 122, 123, 124, 125, 127, 130, 132, 134, 135, 137, 138, 140:145, 147:156, 158, 159, 160, 161, 162, 163, 165:171};}
 
-SurfSub[] = {3, 4,6, 103, 106, 107, 110, 114, 115, 117, 121, 126, 128, 129, 130, 131, 133, 134, 136, 139, 146, 157, 164};
-
-If(!SYMMETRIC)
-  Physical Surface(1) = {SurfSub[]};
-Else
-    
-EndIf
+SurfSub[] = {3, 4,6, 103, 106, 107, 110, 114, 115, 117, 121, 126, 128, 129, 131, 133, 136, 139, 146, 157, 164};
 
 
+// Volume
+surfl = newreg ; Surface Loop(surfl) = {SurfSub[]};
+Volume(1) = {surfl};
+BooleanFragments{Volume{1};Delete;}{Surface{:};Delete;}
+// boolean fragments to remove possible dupplicate surface due to surface loop
 
-//ABC
-If(ABC)
-  Sphere(500) = {L/2, 0, 0, ABC_Z};
-  Dilate {{L/2, 0, 0}, {ABC_X/ABC_Z, 1, 1}} { Volume{500}; }
-  Delete{Volume{500};}
-  Surface Loop(1) = {SurfSub[]};
-  Surface Loop(2) = {165};
-  Volume(1) = {1, 2}
-EndIf
-
-
-If(L != 1)
-     Dilate { {1,1,1}, L } { Point{:}; Line{:}; Surface{:}; } 
-EndIf
-
+// Physical entities
+Physical Volume(1) = {1}; // Inside Submarine
+Physical Surface(10) = { Boundary{Volume{1};}}; // Boundary of Submarine
