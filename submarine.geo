@@ -1,17 +1,18 @@
 SetFactory("OpenCASCADE");
 
 DefineConstant[
- L={1, Min 0.1, Max 100, Step 0.1, Name "Length"},
- h = {0.02, Min 0.01, Max 10, Step 0.01, Name "h size"} 
+ L={1, Min 0.1, Max 100, Step 0.1, Name "Geo/00Length (dilation factor)"},
+ L_sail = {0.1, Min 0.01, Max 0.3, Step 0.01, Name "Geo/01Sail Heigh", ReadOnly 1, Visible 0},
+ h = {0.02, Min 0.01, Max 10, Step 0.01, Name "Geo/1Element mesh size"} 
 ];
 
+//Radius of the submarin "cylinder"
 R = 0.046;
 
 Mesh.CharacteristicLengthMax=h;
 Mesh.CharacteristicLengthMin=h;
 
 //Body
-
 Point(1) = {0,0,0,h};
 Point(2) = {0.046, 0.046,0,h};
 Point(3) = {0.86, 0.046,0,h};
@@ -25,8 +26,7 @@ Circle(3)= {R, 0, 0, R, Pi/2, Pi};
 Extrude { {1,0,0}, {0,0,0}, Pi} { Line{1,2,3} ;}
 Extrude { {1,0,0}, {0,0,0}, -Pi} { Line{1,2,3} ;}
 
-// Middle Backbone
-L_back = 0.1;
+// Sail
 Point(100) = {0.255, 0, 0,h};
 Point(101) = {0.38, 0, 0,h};
 Point(102) = {0.27, R/4,0,h};
@@ -40,10 +40,9 @@ Spline(101) = {100, 104, 105, 101};
 
 Line Loop(100) = {100,-101};
 Surface(100) = {100};
-Extrude {0,0,L_back}{Surface{100};}
+Extrude {0,0,L_sail}{Surface{100};}
 
-// End "Wings"
-L_wings = 0.1;
+// Stern Planes ("Wings in the back")
 Point(200) = {0.91, 0.085, 0,h};
 Point(201) = {0.95, 0.085, 0,h};
 Point(202) = {0.915, 0.085, R/6,h};
@@ -62,8 +61,7 @@ Curve Loop(211) = {202,203};
 Curve Loop(212) = {204,205};
 ThruSections(220) = {210,212, 211};
 
-// End "BackBone"
-
+// Rudder ("sail in the back")
 Point(300) = {0.91, 0, 0.084, h};
 Point(301) = {0.95, 0, 0.084, h};
 Point(302) = {0.915, R/6, 0.084,h};
@@ -89,3 +87,7 @@ Delete{Surface{100,111, 113,115, 116, 121,123, 126,  117, 119, 120, 128, 130,  1
 
 // ok :
 // 3, 4, 6, 103, 106,107, 110, 112, 114, 118, 122, 124, 125,127, 129, 131,  132, 137
+
+If(L != 1)
+     Dilate { {1,1,1}, L } { Point{:}; Line{:}; Surface{:}; } 
+EndIf
