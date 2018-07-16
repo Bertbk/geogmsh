@@ -95,4 +95,5 @@ BooleanFragments{Volume{1};Delete;}{Surface{:};Delete;}
 
 // Physical entities
 Physical Volume(1) = {1}; // Inside Submarine
-Physical Surface(10) = { Boundary{Volume{1};}}; // Boundary of Submarine
+SurfSub[] = Boundary{Volume{1};};
+Physical Surface(11) = {SurfSub[] }; // Boundary of Submarine
