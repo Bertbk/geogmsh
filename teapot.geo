@@ -71,6 +71,5 @@ BooleanDifference{Volume{3};Delete;}{Volume{1};}
 BooleanFragments{Volume{1};Delete;}{Volume{2:3}; Delete;}
 
 //Physical Surface
-Physical Volume(1) = {1:3};
-Physical Surface(10) = {1:7,9,12:14};
-
+Physical Volume(1) = {1:3}; // Volume of Teapot
+Physical Surface(10) = {1:7,9,12:14}; //Exterior surface of Teapot
