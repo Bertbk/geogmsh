@@ -76,18 +76,23 @@ Dilate { {0.95, 0, 0 } , { 1.5,1,1 }} { Line{302,303}; }
 Curve Loop(310) = {300,301};
 Curve Loop(311) = {302,303};
 ThruSections(320) = {310,311};
-
 //Cleaning
 Delete {Volume{1, 320, 220};}
+// Symmetrize
+Symmetry {0, 0, 1} { Duplicata{ Surface{108:110}; } }
+
+
 
 
 //Fragmentations
-BooleanFragments{Surface{1:6};Delete;}{Surface{100:110};Delete;}
-Delete{Surface{100,111, 113,115, 116, 121,123, 126,  117, 119, 120, 128, 130,  133,134, 135, 136, 138, 139,  140, 141} ;}
+BooleanFragments{Surface{1:6};Delete;}{Surface{100:114};Delete;}
 
-// ok :
-// 3, 4, 6, 103, 106,107, 110, 112, 114, 118, 122, 124, 125,127, 129, 131,  132, 137
+Delete{Surface{100, 116, 118, 119, 120, 122, 123, 124, 125, 127, 132, 135, 137, 138, 140:145, 147:156, 158, 159, 160, 161, 162, 163, 165:171};}
+//ok :
+// 3, 4,6, 103, 106, 107, 110, 114, 115, 117, 121, 122, 126, 128, 129, 130, 131, 133, 134, 136, 139, 146, 157, 164, 
+
 
 If(L != 1)
      Dilate { {1,1,1}, L } { Point{:}; Line{:}; Surface{:}; } 
 EndIf
+
