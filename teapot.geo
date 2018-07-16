@@ -39,9 +39,10 @@ lbsplineBody = newreg; Spline(lbsplineBody) = {6, pctlr_1, pctlr_2, pbottom};
 lb_center = newreg; Spline(lb_center) = {pbottom, pbottom_center};
 Extrude { {0,0,1}, {0,0,0}, Pi} { Line{ltop, lbsplineTop, lbsplineBody, lb_center} ;}
 Extrude { {0,0,1}, {0,0,0}, -Pi} { Line{ltop, lbsplineTop, lbsplineBody, lb_center} ;}
-BooleanFragments{Surface{1:8}; Delete;}{}
-
-
+Surface Loop(1) = {1:8};
+Volume(1) = {1};
+//Must remove dupplicates line/surface
+BooleanFragments{Volume{1};Delete;}{Surface{1:16};Delete;}
 
 
 // Bec
@@ -57,27 +58,24 @@ lbspline = newreg; Spline(lbspline) = {pcb[]};
 // Get the disk ON the body
 //The circle to extrude, arround pcb[0]
 R = 10/Vscale;
-ndisk = news; Circle(ndisk) = {0, 60/Vscale, 67/Vscale , R};
-Rotate { {1,0,0}, {0, 60/Vscale, 67/Vscale }, Pi/2} { Line{ndisk};}
+ndisk = newreg; Disk(ndisk) = {0, 60/Vscale, 67/Vscale , R};
+Rotate { {1,0,0}, {0, 60/Vscale, 67/Vscale }, Pi/2} { Surface{ndisk};}
 mywire = newreg; Wire(mywire) = {lbspline};
-Extrude { Line{ndisk};  } Using Wire { mywire }
-BooleanFragments{ Surface{9}; Delete;}{ Surface{3}; Delete;}
-Recursive Delete {Surface{12,9};}
-//end of bec
-lll = newll; Line Loop(lll) = {23};
-Surface(news)={lll};
+Extrude { Surface{ndisk}; } Using Wire { mywire }
+BooleanFragments{Volume{2};Delete;}{Surface{18:21};Delete;}
 
 
 //Anse
-tor = newreg; Torus(tor)={0,-90/Vscale,67/Vscale , 35/Vscale, R};
+tor = 3; Torus(tor)={0,-90/Vscale,67/Vscale , 35/Vscale, R};
 Rotate { {0,1,0}, {0, -60/Vscale, 67/Vscale }, Pi/2} { Volume{tor};}
 Rotate { {1,0,0}, {0, -90/Vscale, 67/Vscale }, Pi/2} { Volume{tor};} //this is to avoid an aditionnal surface
-Delete{Volume{tor};}
-BooleanFragments{Surface{26}; Delete;}{Surface{7};Delete;}
 
-//CLEANING
-//Recursive Delete{Surface{30,31, 26, 27};}
+// Difference
+BooleanDifference{Volume{2};Delete;}{Volume{1};}
+BooleanDifference{Volume{3};Delete;}{Volume{1};}
+BooleanFragments{Volume{1};Delete;}{Volume{2:3}; Delete;}
 
 //Physical Surface
-Physical Surface(1) = {1,2,4,5,6,8, 10, 11, 25,26,27,28,29,30};
+Physical Volume(1) = {1:3};
+Physical Surface(10) = {1:7,9,12:14};
 
