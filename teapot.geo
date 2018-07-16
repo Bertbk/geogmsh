@@ -1,15 +1,10 @@
 SetFactory("OpenCASCADE");
 
-LC = 0.1; // useless
-
 //Teapot !
 // height = 1
 
 DefineConstant[
-  k = {10, Min 1, Max 100, Step 0.1, Name 'Input/00Wavenumber'},
-  nlambda = {10, Min 1, Max 100, Step 1, Name 'Input/01Nb. points per wavelength'},
-  lambda = {2*Pi/k, Name 'Output/02Wavelength', ReadOnly 1, AutoCheck 0},
-  h = {lambda/nlambda, Name 'Output/03Mesh size', ReadOnly 1, AutoCheck 0}
+  h = {0.06, Min 0.01, Max 1, Step 0.01, Name 'Output/03Mesh size', ReadOnly 1, AutoCheck 0}
 ];
 
 Mesh.CharacteristicLengthMin = h;
@@ -17,23 +12,23 @@ Mesh.CharacteristicLengthMax = h;
 
 Vscale = 159.;//do not change please
 //Top of the teapot
-ptopest = newp; Point(ptopest)={0, 0, 159/Vscale, LC}; // TOP
+ptopest = newp; Point(ptopest)={0, 0, 159/Vscale, h}; // TOP
 pTop[]= {};
 cpt = -1;
-cpt++; pTop[cpt]=newp; Point(pTop[cpt])={10/Vscale, 0,  159/Vscale, LC};
-cpt++; pTop[cpt]=newp; Point(pTop[cpt])={22/Vscale, 0., 154./Vscale, LC} ;
-cpt++; pTop[cpt]=newp; Point(pTop[cpt])={15/Vscale, 0., 138./Vscale , LC} ;
-cpt++; pTop[cpt]=newp; Point(pTop[cpt])={55/Vscale, 0., 137/Vscale , LC} ;
-cpt++; pTop[cpt]=newp; Point(pTop[cpt])={64/Vscale, 0., 122/Vscale , LC} ;
+cpt++; pTop[cpt]=newp; Point(pTop[cpt])={10/Vscale, 0,  159/Vscale, h};
+cpt++; pTop[cpt]=newp; Point(pTop[cpt])={22/Vscale, 0., 154./Vscale, h} ;
+cpt++; pTop[cpt]=newp; Point(pTop[cpt])={15/Vscale, 0., 138./Vscale , h} ;
+cpt++; pTop[cpt]=newp; Point(pTop[cpt])={55/Vscale, 0., 137/Vscale , h} ;
+cpt++; pTop[cpt]=newp; Point(pTop[cpt])={64/Vscale, 0., 122/Vscale , h} ;
 
 ltop = newreg; Line(ltop) = {ptopest,pTop[0]};
 lbsplineTop = newreg; Spline(lbsplineTop) = {pTop[]};
 
 // Body of the teapot
-pctlr_1 = newp; Point(pctlr_1) = {60/Vscale, 0., 87/Vscale , LC};
-pctlr_2 = newp; Point(pctlr_2) = {80/Vscale, 0., 10/Vscale , LC};
-pbottom = newp; Point(pbottom) = {64/Vscale, 0., 0, LC} ;
-pbottom_center = newp; Point(pbottom_center) = {0, 0., 0, LC} ;
+pctlr_1 = newp; Point(pctlr_1) = {60/Vscale, 0., 87/Vscale , h};
+pctlr_2 = newp; Point(pctlr_2) = {80/Vscale, 0., 10/Vscale , h};
+pbottom = newp; Point(pbottom) = {64/Vscale, 0., 0, h} ;
+pbottom_center = newp; Point(pbottom_center) = {0, 0., 0, h} ;
 
 lbsplineBody = newreg; Spline(lbsplineBody) = {6, pctlr_1, pctlr_2, pbottom};
 lb_center = newreg; Spline(lb_center) = {pbottom, pbottom_center};
@@ -50,10 +45,10 @@ BooleanFragments{Volume{1};Delete;}{Surface{1:16};Delete;}
 pcb[] = {};
 cpt = -1;
 //For Spline
-cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 60/Vscale,  67/Vscale ,  LC/2};
-cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 80/Vscale,  74/Vscale ,  LC/2};
-cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 95/Vscale,  98/Vscale , LC/2};
-cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 130/Vscale, 120/Vscale , LC/2};
+cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 60/Vscale,  67/Vscale ,  h/2};
+cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 80/Vscale,  74/Vscale ,  h/2};
+cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 95/Vscale,  98/Vscale , h/2};
+cpt ++; pcb[cpt] = newp; Point(pcb[cpt]) = {0, 130/Vscale, 120/Vscale , h/2};
 lbspline = newreg; Spline(lbspline) = {pcb[]};
 // Get the disk ON the body
 //The circle to extrude, arround pcb[0]
